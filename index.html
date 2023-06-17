@@ -118,10 +118,11 @@
           console.info(`transcoded to ${formatStrings[texture.format]}`);
 
           texture.mapping = THREE.CubeReflectionMapping;
+          texture.isCubeTexture = true;
           texture.needsUpdate = true;
 
-          // THIS DOES NOT WORK!!!!
-          // scene.background = texture;
+          // THIS WORKS NOW !!!!
+          scene.background = texture;
 
           material.envMap = texture;
           material.envMapIntensity = 10;

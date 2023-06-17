@@ -78,13 +78,21 @@
         controls.autoRotate = true;
 
         // PlaneGeometry UVs assume flipY=true, which compressed textures don't support.
-        const geometry = flipY(new THREE.PlaneGeometry());
-        const material = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
+        const geometry = flipY(new THREE.BoxGeometry());
+        const material = new THREE.MeshPhysicalMaterial({
+          color: 0x000000,
           side: THREE.DoubleSide,
+          clearcoat: 1,
         });
         const mesh = new THREE.Mesh(geometry, material);
         scene.add(mesh);
+
+        const light = new THREE.AmbientLight(0xffffff, 2);
+        scene.add(light);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        directionalLight.position.set(1, 1, 0);
+        scene.add(directionalLight);
 
         const formatStrings = {
           [THREE.RGBAFormat]: "RGBA32",
@@ -109,10 +117,14 @@
 
           console.info(`transcoded to ${formatStrings[texture.format]}`);
 
-          material.map = texture;
-          material.transparent = true;
-          material.side = THREE.DoubleSide;
+          texture.mapping = THREE.CubeReflectionMapping;
+          texture.needsUpdate = true;
 
+          // THIS DOES NOT WORK!!!!
+          // scene.background = texture;
+
+          material.envMap = texture;
+          material.envMapIntensity = 10;
           material.needsUpdate = true;
         } catch (e) {
           console.error(e);
